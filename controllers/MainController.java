@@ -7,9 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Created by Justyna on 29.05.2017.
@@ -22,14 +28,28 @@ public class MainController {
 
     // Logger logger = Logger.getLogger(MainController.class);
 
- @RequestMapping(value = "/", method = RequestMethod.GET)
+ @RequestMapping(value = "/{ticketId}", method = RequestMethod.GET)
  @ResponseBody
- public String home(){
-     Ticket ticket=new Ticket("jestem wiadomoscia z controllera,","Justyna");
-     ticketRepository.save(ticket);
-     return "zapisalem do bazy";
- }
+ public void home( @PathVariable("prefix")String prefix){
+        List<Ticket> tickets= ticketRepository.findByMessageLike("%Nic%");
+        String messages = "tickety rozpoczynajacych sie na 'Nic': ;
+        for (Ticket ticket:tickets
+             ) {messages+= ticket.getMessage() + " ,";
 
+        }
+
+        return messages;
+//        return tickets.stream().map(s->s.getMessage()).collect
+//                (Collectors.joining("," , "Tickety",""));
+//    }
+//        Optional<Ticket> ticket = ticketRepository.findOne(id);
+//        if (ticket.isPresent()) {
+//
+//
+//            return "odczytalem z bazy: " + ticket.get().getMessage();
+//
+// }
+//return ticket.map(s->"Dana z bazy: " +s.getMessage()).orElse("brak danych");
 //    public String main(Model model) {
 //
 //        ZonedDateTime now = LocalDateTime.now().atZone(ZoneId.of("Europe/Paris"));
